@@ -28,27 +28,32 @@ Tree::Tree() {
  * Destrutor
  */
 Tree::~Tree() {
-
+	// Serve pra nada ainda
 }
 
 /**
+ * Recupera o nó raiz da árvore
  *
- * @param
+ * @return O nó raiz da árvore
  */
 Node *Tree::getRoot() {
     return root;
 }
 
 /**
+ * Verifica se a árvore está vazia ou não
  *
+ * @return Verdadeiro se a árvore estiver vazia, falso caso contrário
  */
 bool Tree::isEmpty() {
     return (root == NULL);
 }
 
 /**
+ * Recupera a quantidade de nós na árvore/sub-árvore
  *
- * @param r
+ * @param r Nó de referência
+ * @return Quantidade de nós na árvore/sub-árvore
  */
 int Tree::qtdNodes(Node *r) {
 	if (r == NULL)
@@ -57,8 +62,10 @@ int Tree::qtdNodes(Node *r) {
 }
 
 /**
+ * Recupera a altura da árvore/sub-árvore
  *
- * @param
+ * @param r Nó de referência
+ * @return Altura da árvore/sub-árvore
  */
 int Tree::height(Node *r) {
 	if (r == NULL)
@@ -69,8 +76,9 @@ int Tree::height(Node *r) {
 }
 
 /**
+ * Insere um novo valor na árvore
  *
- * @param
+ * @param new_value Valor a ser inserido na árvore
  */
 void Tree::insert(char new_value) {
 	int isOperator = false;
@@ -121,7 +129,7 @@ void Tree::insert(char new_value) {
 
 
 /**
- *
+ * Imprime os valores na árvore por largura/nível
  */
 void Tree::printTreeInLevel() {
 	queue<Node*> fila;
@@ -129,20 +137,26 @@ void Tree::printTreeInLevel() {
 	int limit = pow(2, totalNodes) - 1;
 	int nivel = 0;
 	int auxNivel = 0;
+	bool print = false;
 
 	fila.push(root);
 	auxNivel++;
-	//!fila.empty()
 
 	while(limit--) {
-		if ((int)pow(2, nivel) == auxNivel) {
-			printf("\nNivel %d: ", nivel);
-			nivel++;
-		}
-
 		Node *n = fila.front();
 		fila.pop();
+
+		if ((int)pow(2, nivel) == auxNivel) {
+			print = true;
+			nivel++;
+		}
 		auxNivel++;
+
+		if (print && n != NULL) {
+			printf("\nNivel %d: ", nivel-1);
+			print = false;
+		}
+
 		if (n != NULL) {
 			printf("%c ", n->value);
 
@@ -152,12 +166,6 @@ void Tree::printTreeInLevel() {
 			fila.push(NULL);
 			fila.push(NULL);
 		}
-		/*if (n->lc != NULL)
-			fila.push(n->lc);
-		if (n->rc != NULL)
-			fila.push(n->rc);
-			*/
-
 	}
 }
 
@@ -165,7 +173,7 @@ void Tree::printTreeInLevel() {
 /**
  * Imprime os elementos da árvore em pré ordem recursivamente
  *
- * @param r
+ * @param r Nó de referência
  */
 void Tree::preOrder(Node *r) {
 	if (r != NULL) {
@@ -178,7 +186,7 @@ void Tree::preOrder(Node *r) {
 /**
  * Imprime os elementos da árvore em ordem recursivamente
  *
- * @param r
+ * @param r Nó de referência
  */
 void Tree::inOrder(Node *r) {
 	if (r != NULL) {
@@ -191,7 +199,7 @@ void Tree::inOrder(Node *r) {
 /**
  * Imprime os elementos da árvore em pós ordem recursivamente
  *
- * @param r
+ * @param r Nó de referência
  */
 void Tree::posOrder(Node *r) {
 	if (r != NULL) {
@@ -203,7 +211,7 @@ void Tree::posOrder(Node *r) {
 
 /**
  *
- * @param r
+ * @param r Nó de referência
  */
 void Tree::whoLeaf(Node *r) {
 	if (r == NULL)
