@@ -2,7 +2,7 @@
  * postfix.h
  *
  *  Created on: 13 de fev de 2018
- *      Author: Anyone
+ *      Author:
  */
 
 #ifndef POSTFIX_H_
@@ -12,13 +12,16 @@
 
 using namespace std;
 
+/*
+* Classe Postfix e seus metodos e atributos publicos 
+*/
 class Postfix {
 	public:
-		string postf;
-		Postfix();
-		virtual ~Postfix();
-		void create(char* inFix);
-		int preced(char value);
+		string postf; //atributo da sequencia posordem
+		Postfix(); //construtor
+		virtual ~Postfix(); //destrutor
+		void create(char* inFix); //cria a sequencia posordem
+		int preced(char value); //retorna o valor de precedencia do caractere
 };
 
 #endif /* POSTFIX_H_ */

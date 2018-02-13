@@ -2,7 +2,7 @@
  * postfix.cpp
  *
  *  Created on: 13 de fev de 2018
- *      Author: xogun
+ *      Author:
  */
 
 #include "postfix.h"
@@ -23,11 +23,17 @@ Postfix::~Postfix() {
 	// TODO Auto-generated destructor stub
 }
 
+/*
+* metodo para criacao da sequencia pos-ordem, posteriormente utilizada pra criacao da arvore
+* 
+* @param inFix Sequencia da expressao aritmetic
+*/
+
 void Postfix::create(char* inFix){
 	stack<char> sOps;
-	postf= "";
+	postf = "";
 
-	for (int i=0; inFix[i] != '\0'; i++) {
+	for (int i = 0; inFix[i] != '\0'; i++) {
 		if (isdigit(inFix[i])) {
 			postf += inFix[i];
 		} else {
@@ -63,7 +69,7 @@ void Postfix::create(char* inFix){
 			}
 		}
 	}
-	// Inserir os ultimos operadors
+	// Inserir os ultimos operadores
 	while (!sOps.empty()) {
 		if (sOps.top() != ')')
 			postf += sOps.top();
@@ -75,6 +81,13 @@ void Postfix::create(char* inFix){
 	//printf("%s\n", inFix);
 	//printf("%s\n", postfix);
 }
+
+/*
+* metodo de ordem de precedencia dos operadores e parenteses
+* 
+* @param value Caractere de operador/parentese
+* @return Valor de precedencia 
+*/
 
 int Postfix::preced(char value) {
 	switch(value) {

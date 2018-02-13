@@ -3,7 +3,7 @@
 // Author      : 
 // Version     :
 // Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Description : Ansi-style
 //============================================================================
 
 #include "tree.h"
@@ -16,7 +16,7 @@ using namespace std;
 
 
 /**
- *
+ *  Metodo de calculo da expressao aritmetica atraves da iterecao da arvore binaria
  */
 float resolutionTree(Node *node) {
 	if (node == NULL)
@@ -39,10 +39,10 @@ float resolutionTree(Node *node) {
 }
 
 /**
- *
+ * metodo principal de execucao 
  */
 int main() {
-	ifstream file("entrada.txt");
+	ifstream file("../entrada.txt");
 	char line[100];
 	int caso = 1;
 	Postfix pf;
@@ -51,7 +51,7 @@ int main() {
 			file.getline(line, 100);
 			Tree tree;
 			string inFix = "";
-			for (int i=0; line[i] != '\0'; i++) {
+			for (int i = 0; line[i] != '\0'; i++) {
 				if (line[i] != ' ')
 					inFix += line[i];
 			}
@@ -65,7 +65,7 @@ int main() {
 			tree.printTreeInLevel();
 			printf("\nAltura: %d",         tree.height(tree.getRoot()));
 			printf("\nFolhas: ");          tree.whoLeaf(tree.getRoot());
-			printf("\nResultado: %.3f", resolutionTree(tree.getRoot()));
+			printf("\nResultado: %.f", resolutionTree(tree.getRoot()));
 			printf("\n\n");
 
 

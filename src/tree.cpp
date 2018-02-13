@@ -3,7 +3,7 @@
 // Author      :
 // Version     :
 // Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Description :  Ansi-style
 //============================================================================
 
 #include "tree.h"
@@ -31,7 +31,7 @@ Tree::~Tree() {
 }
 
 /**
- * Recupera o nó raiz da árvore
+ * Metodo que recupera o nó raiz da árvore
  *
  * @return O nó raiz da árvore
  */
@@ -40,7 +40,7 @@ Node *Tree::getRoot() {
 }
 
 /**
- * Verifica se a árvore está vazia ou não
+ * Metodo que verifica se a árvore está vazia ou não
  *
  * @return Verdadeiro se a árvore estiver vazia, falso caso contrário
  */
@@ -49,7 +49,7 @@ bool Tree::isEmpty() {
 }
 
 /**
- * Recupera a quantidade de nós na árvore/sub-árvore
+ * Metodo que recupera a quantidade de nós na árvore/sub-árvore
  *
  * @param r Nó de referência
  * @return Quantidade de nós na árvore/sub-árvore
@@ -61,7 +61,7 @@ int Tree::qtdNodes(Node *r) {
 }
 
 /**
- * Recupera a altura da árvore/sub-árvore
+ * Metodo que recupera a altura da árvore/sub-árvore
  *
  * @param r Nó de referência
  * @return Altura da árvore/sub-árvore
@@ -75,16 +75,7 @@ int Tree::height(Node *r) {
 }
 
 /**
- * Insere um novo valor na árvore
- *
- * @param new_value Valor a ser inserido na árvore
- */
-void Tree::insert(char new_value) {
-
-}
-
-/**
- * Cria aárvore binária de expressão a partir
+ * Metodo que cria a árvore binária de expressão a partir
  * da expressão pós-fixada
  *
  * @param postfix Expressão pós-fixada
@@ -111,7 +102,7 @@ void Tree::createByPostfix(char* postfix) {
 }
 
 /**
- * Imprime os valores na árvore por largura/nível
+ * Metodo que imprime os valores na árvore por largura/nível
  */
 void Tree::printTreeInLevel() {
 	queue<Node*> fila;
@@ -153,7 +144,7 @@ void Tree::printTreeInLevel() {
 
 
 /**
- * Imprime os elementos da árvore em pré ordem recursivamente
+ * Metodo que imprime os elementos da árvore em pré ordem recursivamente
  *
  * @param r Nó de referência
  */
@@ -166,7 +157,7 @@ void Tree::preOrder(Node *r) {
 }
 
 /**
- * Imprime os elementos da árvore em ordem recursivamente
+ * Metodo que imprime os elementos da árvore em ordem recursivamente
  *
  * @param r Nó de referência
  */
@@ -179,7 +170,7 @@ void Tree::inOrder(Node *r) {
 }
 
 /**
- * Imprime os elementos da árvore em pós ordem recursivamente
+ * Metodo que imprime os elementos da árvore em pós ordem recursivamente
  *
  * @param r Nó de referência
  */
@@ -192,6 +183,8 @@ void Tree::posOrder(Node *r) {
 }
 
 /**
+ * Metodo que imprime as folhas (valores inteiros) em conjunto
+ * com seus respectivos pais (operadores)
  *
  * @param r Nó de referência
  */
