@@ -28,11 +28,9 @@ struct Node {
 };
 
 class Tree {
-    Node *root;      	   // Nó raiz
+    Node *root; // Nó raiz
 
     public:
-    	Node *PPosition;  	   // Posição do novo nó;
-    	int parentesesAbertos; // indicador de parenteses abertos
         Tree();  // Construtor
         ~Tree(); // Destrutor
         Node *getRoot();
@@ -40,6 +38,7 @@ class Tree {
         int qtdNodes(Node *r);
         int height(Node *r);
         void insert(char new_value);
+        void createByPostfix(char *postfix);
         void printTreeInLevel(); // Imprime por nivel
         void preOrder(Node *r);
         void inOrder(Node *r);

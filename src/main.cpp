@@ -7,6 +7,7 @@
 //============================================================================
 
 #include "tree.h"
+#include "postfix.h"
 #include <stdio.h>
 #include <string.h>
 #include <fstream>
@@ -44,14 +45,18 @@ int main() {
 	ifstream file("entrada.txt");
 	char line[100];
 	int caso = 1;
+	Postfix pf;
 	if (file.is_open()) {
 		while (! file.eof()) {
 			file.getline(line, 100);
 			Tree tree;
+			string inFix = "";
 			for (int i=0; line[i] != '\0'; i++) {
 				if (line[i] != ' ')
-					tree.insert(line[i]);
+					inFix += line[i];
 			}
+			pf.create((char *)inFix.c_str());
+			tree.createByPostfix((char *)pf.postf.c_str());
 
 			printf("Caso %d:", caso);
 			printf("\nPré-Ordem: ");       tree.preOrder(tree.getRoot());
@@ -62,6 +67,8 @@ int main() {
 			printf("\nFolhas: ");          tree.whoLeaf(tree.getRoot());
 			printf("\nResultado: %.3f", resolutionTree(tree.getRoot()));
 			printf("\n\n");
+
+
 
 			caso++;
 		}

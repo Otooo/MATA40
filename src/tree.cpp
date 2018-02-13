@@ -9,9 +9,10 @@
 #include "tree.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <queue>
 #include <math.h>
+#include <stack>
+#include <ctype.h>
 
 using namespace std;
 
@@ -20,8 +21,6 @@ using namespace std;
  */
 Tree::Tree() {
     root = NULL;
-    PPosition = NULL;
-    parentesesAbertos = 0;
 }
 
 /**
@@ -81,52 +80,35 @@ int Tree::height(Node *r) {
  * @param new_value Valor a ser inserido na árvore
  */
 void Tree::insert(char new_value) {
-	int isOperator = false;
-	switch (new_value) {
-		case '+':
-		case '-':
-		case '*':
-		case '/': isOperator = true;
-			break;
-		default: isOperator = false;
-			break;
-	}
 
-	if (new_value == '(') {
-		parentesesAbertos++;
-		return;
-	} else if (new_value == ')') {
-		parentesesAbertos--;
-		if (PPosition != root)
-			PPosition = PPosition->p;
-		return;
-	}
-
-	Node *node = new Node(new_value);
-    if (root == NULL) {
-        root = node;
-        PPosition = root;
-    } else {
-    	if (isOperator == true) {
-    		node->p = PPosition->p;
-    		node->lc = PPosition;
-    		PPosition->p = node;
-    		if (PPosition == root){
-    			root = node;
-    		}
-    		PPosition = node;
-    		if (PPosition->p != NULL)
-    			PPosition->p->rc = node;
-
-    	} else {
-    		PPosition->rc = node;
-    		node->p = PPosition;
-    		if (parentesesAbertos > 1)
-    			PPosition = node;
-    	}
-    }
 }
 
+/**
+ * Cria aárvore binária de expressão a partir
+ * da expressão pós-fixada
+ *
+ * @param postfix Expressão pós-fixada
+ */
+void Tree::createByPostfix(char* postfix) {
+	stack<Node*> sNode;
+
+	for (int i=0; postfix[i] != '\0'; i++) {
+		Node *node = new Node(postfix[i]);
+		if (isdigit(postfix[i])) {
+			sNode.push(node);
+		} else {
+			// filhos
+			node->rc = sNode.top(); sNode.pop();
+			node->lc = sNode.top(); sNode.pop();
+			// pai
+			node->rc->p = node;
+			node->lc->p = node;
+
+			sNode.push(node);
+		}
+	}
+	root = sNode.top();
+}
 
 /**
  * Imprime os valores na árvore por largura/nível
