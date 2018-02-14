@@ -6,36 +6,53 @@
 // Description :  Ansi-style
 //============================================================================
 
-#include "tree.h"
+#include "structurefunctions.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <queue>
 #include <math.h>
 #include <stack>
 #include <ctype.h>
 
-using namespace std;
+#define STACK_MAX 100
 
-/**
- * Construtor
- */
-Tree::Tree() {
-    root = NULL;
+struct Stack {
+	int data[STACK_MAX];
+	int size;
+};
+typedef struct Stack Stack;
+
+void initStack(Stack *s) {
+	s->size = 0;
 }
 
-/**
- * Destrutor
- */
-Tree::~Tree() {
-	// Serve pra nada ainda
+int top(Stack *s) {
+	if (s->size > 0)
+		return s->data[s->size-1];
+	printf("Pilha vazia\n");
+	return -1; //pilha vazia
 }
+
+void push(Stack *s, int d) {
+	if (s->size < STACK_MAX)
+		s->data[s->size++] = d;
+	else
+		printf("Pilha cheia\n");
+}
+
+void pop(Stack *s) {
+	if (s->size == 0)
+		printf("Pilha vazia!\n");
+	else
+		S->size--;
+}
+
 
 /**
  * Metodo que recupera o nó raiz da árvore
  *
  * @return O nó raiz da árvore
  */
-Node *Tree::getRoot() {
+Node *getRoot() {
     return root;
 }
 
@@ -44,7 +61,7 @@ Node *Tree::getRoot() {
  *
  * @return Verdadeiro se a árvore estiver vazia, falso caso contrário
  */
-bool Tree::isEmpty() {
+bool isEmpty() {
     return (root == NULL);
 }
 
@@ -54,7 +71,7 @@ bool Tree::isEmpty() {
  * @param r Nó de referência
  * @return Quantidade de nós na árvore/sub-árvore
  */
-int Tree::qtdNodes(Node *r) {
+int qtdNodes(Node *r) {
 	if (r == NULL)
 		return 0;
 	return 1 + qtdNodes(r->lc) + qtdNodes(r->rc);
@@ -66,7 +83,7 @@ int Tree::qtdNodes(Node *r) {
  * @param r Nó de referência
  * @return Altura da árvore/sub-árvore
  */
-int Tree::height(Node *r) {
+int height(Node *r) {
 	if (r == NULL)
 		return 0;
 	int lh = height(r->lc);
@@ -80,10 +97,11 @@ int Tree::height(Node *r) {
  *
  * @param postfix Expressão pós-fixada
  */
-void Tree::createByPostfix(char* postfix) {
+void createByPostfix(char* postfix) {
 	stack<Node*> sNode;
 
-	for (int i=0; postfix[i] != '\0'; i++) {
+	int i;
+	for (i = 0; postfix[i] != '\0'; i++) {
 		Node *node = new Node(postfix[i]);
 		if (isdigit(postfix[i])) {
 			sNode.push(node);
@@ -104,7 +122,7 @@ void Tree::createByPostfix(char* postfix) {
 /**
  * Metodo que imprime os valores na árvore por largura/nível
  */
-void Tree::printTreeInLevel() {
+void printTreeInLevel() {
 	queue<Node*> fila;
 	int totalNodes = qtdNodes(root);
 	int limit = pow(2, totalNodes) - 1;
@@ -148,7 +166,7 @@ void Tree::printTreeInLevel() {
  *
  * @param r Nó de referência
  */
-void Tree::preOrder(Node *r) {
+void preOrder(Node *r) {
 	if (r != NULL) {
 		printf("%c ", r->value);
 		preOrder(r->lc);
@@ -161,7 +179,7 @@ void Tree::preOrder(Node *r) {
  *
  * @param r Nó de referência
  */
-void Tree::inOrder(Node *r) {
+void inOrder(Node *r) {
 	if (r != NULL) {
 		inOrder(r->lc);
 		printf("%c ", r->value);
@@ -174,7 +192,7 @@ void Tree::inOrder(Node *r) {
  *
  * @param r Nó de referência
  */
-void Tree::posOrder(Node *r) {
+void posOrder(Node *r) {
 	if (r != NULL) {
 		posOrder(r->lc);
 		posOrder(r->rc);
@@ -188,7 +206,7 @@ void Tree::posOrder(Node *r) {
  *
  * @param r Nó de referência
  */
-void Tree::whoLeaf(Node *r) {
+void whoLeaf(Node *r) {
 	if (r == NULL)
 		return;
 	if (r->lc == NULL && r->rc == NULL) {
