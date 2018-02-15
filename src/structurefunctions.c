@@ -10,40 +10,99 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <stack>
 #include <ctype.h>
 
-#define STACK_MAX 100
+#define MAX 100
 
-struct Stack {
-	int data[STACK_MAX];
+// PILHA
+typedef struct Stack {
+	Node *data[MAX];
 	int size;
-};
-typedef struct Stack Stack;
+} Stack;
 
-void initStack(Stack *s) {
-	s->size = 0;
+void freeStack(Stack *s) {
+	free(s->data);
+	free(s);
 }
 
-int top(Stack *s) {
+Stack *new_Stack() {
+	Stack *stack = malloc(sizeof(Stack));
+	stack->data = malloc(sizeof(stack->data)*100);
+	stack->size = 0;
+
+	return stack;
+}
+
+Node *stack_top(Stack *s) {
 	if (s->size > 0)
 		return s->data[s->size-1];
-	printf("Pilha vazia\n");
-	return -1; //pilha vazia
+
+	return NULL; //pilha vazia
 }
 
-void push(Stack *s, int d) {
-	if (s->size < STACK_MAX)
-		s->data[s->size++] = d;
+void stack_push(Stack *s, Node* node) {
+	if (s->size < MAX)
+		s->data[s->size++] = node;
 	else
-		printf("Pilha cheia\n");
+		;// pilha cheia
 }
 
-void pop(Stack *s) {
+void stack_pop(Stack *s) {
 	if (s->size == 0)
-		printf("Pilha vazia!\n");
+		;//Pilha vazia
 	else
-		S->size--;
+		s->size--;
+}
+
+// FILA
+typedef struct Queue {
+	Node *data[MAX];
+	int size;
+} Queue;
+
+void freeQueue(Queue *q) {
+	free(q->data);
+	free(q);
+}
+
+Stack *new_Queue() {
+	Stack *queue = malloc(sizeof(queue));
+	queue->data = malloc(sizeof(queue->data)*100);
+	queue->size = 0;
+
+	return queue;
+}
+
+Node *queue_front(Queue *q) {
+	if (q->size > 0)
+		return q->data[0];
+
+	return NULL; // Fila vazia
+}
+
+void queue_push(Queue *q, Node* node) {
+	if (q->size < MAX)
+		q->data[q->size++] = node;
+	else
+		;// Fila cheia
+}
+
+void queue_pop(Queue *q) {
+	if (q->size == 1) {
+		q->size--;
+	} else if (q->size > 1) {
+		Node *naux1, *naux2;
+		naux1 = q->data[q->size-2];
+		q->data[q->size-2] = q->data[q->size-1];
+
+		for (int i = (q->size-2); i > 0; i--) {
+			naux2 = q->data[i-1];
+			q->data[i-1] = naux1;
+			naux1 = naux2;
+		}
+		q->size--;
+	} else
+		;// Fila vazia
 }
 
 
@@ -61,8 +120,8 @@ Node *getRoot() {
  *
  * @return Verdadeiro se a árvore estiver vazia, falso caso contrário
  */
-bool isEmpty() {
-    return (root == NULL);
+int isEmpty() {
+    return (root == NULL)? 0:1;
 }
 
 /**
@@ -98,64 +157,68 @@ int height(Node *r) {
  * @param postfix Expressão pós-fixada
  */
 void createByPostfix(char* postfix) {
-	stack<Node*> sNode;
+	//stack<Node*> sNode;
+	Stack sNode = new_Stack();
 
 	int i;
 	for (i = 0; postfix[i] != '\0'; i++) {
-		Node *node = new Node(postfix[i]);
+		//Node *node = new Node(postfix[i]);
+		Node *node = new_Node(postfix[i]);
 		if (isdigit(postfix[i])) {
-			sNode.push(node);
+			stack_push(sNode, node); //sNode.push(node);
 		} else {
 			// filhos
-			node->rc = sNode.top(); sNode.pop();
-			node->lc = sNode.top(); sNode.pop();
+			node->rc = stack_top(sNode); stack_pop(sNode);//node->rc = sNode.top(); sNode.pop();
+			node->lc = stack_top(sNode); stack_pop(sNode);//node->lc = sNode.top(); sNode.pop();
 			// pai
 			node->rc->p = node;
 			node->lc->p = node;
 
-			sNode.push(node);
+			stack_push(sNode, node); //sNode.push(node);
 		}
 	}
-	root = sNode.top();
+	root = stack_top(sNode);// root = sNode.top();
 }
 
 /**
  * Metodo que imprime os valores na árvore por largura/nível
  */
 void printTreeInLevel() {
-	queue<Node*> fila;
+	//queue<Node*> fila;
+	Queue fila = new_queue();
+
 	int totalNodes = qtdNodes(root);
 	int limit = pow(2, totalNodes) - 1;
 	int nivel = 0;
 	int auxNivel = 0;
-	bool print = false;
+	int print = 0; // print 1:true, 0:false
 
-	fila.push(root);
+	queue_push(fila, root);//fila.push(root);
 	auxNivel++;
 
 	while(limit--) {
-		Node *n = fila.front();
-		fila.pop();
+		Node *n = queue_front(fila);//fila.front();
+		queue_pop(fila);//fila.pop();
 
 		if ((int)pow(2, nivel) == auxNivel) {
-			print = true;
+			print = 1; // true
 			nivel++;
 		}
 		auxNivel++;
 
 		if (print && n != NULL) {
 			printf("\nNivel %d: ", nivel-1);
-			print = false;
+			print = 0; // false
 		}
 
 		if (n != NULL) {
 			printf("%c ", n->value);
 
-			fila.push(n->lc);
-			fila.push(n->rc);
+			queue_push(fila, n->lc);//fila.push(n->lc);
+			queue_push(fila, n->rc);//fila.push(n->rc);
 		} else {
-			fila.push(NULL);
-			fila.push(NULL);
+			queue_push(fila, NULL);//fila.push(NULL);
+			queue_push(fila, NULL);//fila.push(NULL);
 		}
 	}
 }
