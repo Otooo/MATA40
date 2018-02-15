@@ -1,0 +1,51 @@
+1 + ((5-5) + 9)
+(2 + (5*((4/2)-1)))
+4 * 2-(6+1)+8/(9-7)
+(((4 * 2)-(6+1))+(8/(9-7))
+
+
+
+	int isOperator = false;
+	switch (new_value) {
+		case '+':
+		case '-':
+		case '*':
+		case '/': isOperator = true;
+			break;
+		default: isOperator = false;
+			break;
+	}
+
+	if (new_value == '(') {
+		parentesesAbertos++;
+		return;
+	} else if (new_value == ')') {
+		parentesesAbertos--;
+		if (PPosition != root)
+			PPosition = PPosition->p;
+		return;
+	}
+
+	Node *node = new Node(new_value);
+    if (root == NULL) {
+        root = node;
+        PPosition = root;
+    } else {
+    	if (isOperator == true) {
+    		node->p = PPosition->p;
+    		node->lc = PPosition;
+    		PPosition->p = node;
+    		if (PPosition == root){
+    			root = node;
+    		}
+    		PPosition = node;
+    		if (PPosition->p != NULL)
+    			PPosition->p->rc = node;
+
+    	} else {
+    		PPosition->rc = node;
+    		node->p = PPosition;
+    		if (parentesesAbertos > 1)
+    			PPosition = node;
+    	}
+    }

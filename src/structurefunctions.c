@@ -14,6 +14,16 @@
 
 #define MAX 100
 
+// NEW NODE
+Node *new_Node(char new_value) {
+	Node *novo = malloc(sizeof(Node));
+	novo->value = new_value;
+	novo->p = null;
+	novo->lc = null;
+	novo->rc = null;
+
+	return novo;
+}
 
 // PILHA
 typedef struct Stack {

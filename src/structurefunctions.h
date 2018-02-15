@@ -29,27 +29,19 @@ typedef struct node {
     char value;
 } Node;
 
-extern Node* new_Node(char new_value) {
-	Node *novo = malloc(sizeof(Node));
-	novo->value = new_value;
-	novo->p = null;
-	novo->lc = null;
-	novo->rc = null;
+Node *new_Node(char new_value);
 
-	return novo;
-}
+Node *root; //variavel global com do nó raiz
 
-extern Node *root; //variavel global com do nó raiz
-
-extern Node *getRoot(); //Retorna raiz da arvore
-extern int isEmpty(); //verifica se arvore esta vazia
-extern int qtdNodes(Node *r); //retorna a quantidade de nós
-extern int height(Node *r); // retorna a altura da arvore
-extern void createByPostfix(char* postfix); //cria a arvore a partir da sequencia postfix
-extern void printTreeInLevel(); // Imprime por nivel
-extern void preOrder(Node *r); //imprime a sequencia preordem
-extern void inOrder(Node *r); //imprime a sequencia em ordem
-extern void posOrder(Node *r); //imprime a sequencia posordem (postfix)
-extern void whoLeaf(Node *r); // imprime folhas e seus pais
+Node *getRoot(); //Retorna raiz da arvore
+int isEmpty(); //verifica se arvore esta vazia
+int qtdNodes(Node *r); //retorna a quantidade de nós
+int height(Node *r); // retorna a altura da arvore
+void createByPostfix(char* postfix); //cria a arvore a partir da sequencia postfix
+void printTreeInLevel(); // Imprime por nivel
+void preOrder(Node *r); //imprime a sequencia preordem
+void inOrder(Node *r); //imprime a sequencia em ordem
+void posOrder(Node *r); //imprime a sequencia posordem (postfix)
+void whoLeaf(Node *r); // imprime folhas e seus pais
 
 #endif // STRUCTUREFUNCTIONS_H_
