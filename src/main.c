@@ -172,21 +172,21 @@ int LinesFile(char *fileName) {
 
 	arq = fopen(fileName, "r");
 	if(arq != NULL) {
-		while( (ch=fgetc(arq))!= EOF )
+		while( (ch=fgetc(arq))!= EOF ) {
 			if(ch == '\n')
 			  count++;
+		}
 	}
 
 	fclose(arq);
 
-	return count;
+	return count+1;
 }
 
 
 char *readFileLine(char* fileName, int line) {
-
 	char ch;
-	char *retorno = "";
+	char *retorno;
 	FILE *arq;
 	int countIndex = 0;
 	int countLine = 1;
@@ -194,17 +194,19 @@ char *readFileLine(char* fileName, int line) {
 	arq = fopen(fileName, "r");
 	if(arq != NULL) {
 		while( (ch=fgetc(arq))!= EOF ) {
+			printf("%c");
 			if(ch == '\n')
 				countLine++;
 			if (countLine > line) {
 				break;
 			} else if (countLine == line) {
-				retorno = (char *) realloc(retorno, sizeof(char)*(++countIndex));
-				retorno[countIndex-1] = ch;
+
+				//retorno = (char *) realloc(retorno, sizeof(char)*(++countIndex));
+				//retorno[countIndex-1] = ch;
 			}
 		}
 	}
-
+	printf("\neita III");
 	fclose(arq);
 	return retorno;
 }
@@ -217,6 +219,7 @@ int main(int argc, char **argv) {
 	//char line[100] = ;
 	char *fileName = (argc <= 1)? "entrada.txt" : argv[1]; // ele executa passando o nome do arquivo se for compilar na mão, ou pega o padrão se for de outro jeito
 	int qtdLines = LinesFile(fileName);
+	printf("\nLINHAS: %d\n", qtdLines);
 	int currentLine = 1;
 	char *line;
 
@@ -253,8 +256,6 @@ int main(int argc, char **argv) {
 			printf("\nFolhas: ");          whoLeaf(getRoot());
 			printf("\nResultado: %.f", resolutionTree(getRoot()));
 			printf("\n\n");
-
-
 
 			caso++;
 		 } // end For lines
