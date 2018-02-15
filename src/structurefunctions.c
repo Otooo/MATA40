@@ -14,9 +14,11 @@
 
 #define MAX 100
 
+
 // PILHA
 typedef struct Stack {
-	Node *data[MAX];
+	//Node *data[100];
+	Node **data;
 	int size;
 } Stack;
 
@@ -26,8 +28,8 @@ void freeStack(Stack *s) {
 }
 
 Stack *new_Stack() {
-	Stack *stack = malloc(sizeof(Stack));
-	stack->data = malloc(sizeof(stack->data)*100);
+	Stack *stack = (Stack *) malloc(sizeof(Stack));
+	stack->data = (Node **) malloc(sizeof(stack->data)*MAX);
 	stack->size = 0;
 
 	return stack;
@@ -56,7 +58,8 @@ void stack_pop(Stack *s) {
 
 // FILA
 typedef struct Queue {
-	Node *data[MAX];
+	//Node *data[MAX];
+	Node **data;
 	int size;
 } Queue;
 
@@ -65,9 +68,9 @@ void freeQueue(Queue *q) {
 	free(q);
 }
 
-Stack *new_Queue() {
-	Stack *queue = malloc(sizeof(queue));
-	queue->data = malloc(sizeof(queue->data)*100);
+Queue *new_Queue() {
+	Queue *queue = (Queue *) malloc(sizeof(queue));
+	queue->data = (Node **) malloc(sizeof(queue->data)*100);
 	queue->size = 0;
 
 	return queue;
@@ -95,7 +98,8 @@ void queue_pop(Queue *q) {
 		naux1 = q->data[q->size-2];
 		q->data[q->size-2] = q->data[q->size-1];
 
-		for (int i = (q->size-2); i > 0; i--) {
+		int i;
+		for (i = (q->size-2); i > 0; i--) {
 			naux2 = q->data[i-1];
 			q->data[i-1] = naux1;
 			naux1 = naux2;
@@ -158,7 +162,7 @@ int height(Node *r) {
  */
 void createByPostfix(char* postfix) {
 	//stack<Node*> sNode;
-	Stack sNode = new_Stack();
+	Stack *sNode = new_Stack();
 
 	int i;
 	for (i = 0; postfix[i] != '\0'; i++) {
@@ -185,7 +189,7 @@ void createByPostfix(char* postfix) {
  */
 void printTreeInLevel() {
 	//queue<Node*> fila;
-	Queue fila = new_queue();
+	Queue *fila = new_Queue();
 
 	int totalNodes = qtdNodes(root);
 	int limit = pow(2, totalNodes) - 1;

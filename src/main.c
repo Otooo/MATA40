@@ -9,13 +9,14 @@
 #include "structurefunctions.h"
 #include <stdio.h>
 #include <string.h>
-#include <fstream>
 #include <ctype.h>
 
 #define MAX 100
 
 int preced(char value);
-void create(char* inFix);
+char *create(char* inFix);
+int LinesFile(char *fileName);
+char *readFileLine(char* fileName, int line);
 
 typedef struct StackChar {
 	char data[MAX];
@@ -31,7 +32,6 @@ void freeStackChar(StackChar *s) {
 // acho que não precisa
 StackChar *new_StackChar() {
 	StackChar *stack = malloc(sizeof(StackChar));
-	stack->data = malloc(sizeof(stack->data)*100);
 	stack->size = 0;
 
 	return stack;
@@ -41,7 +41,7 @@ char stackchar_top(StackChar s) {
 	if (s.size > 0)
 		return s.data[s.size-1];
 
-	return ''; //pilha de char vazia
+	return ' '; //pilha de char vazia
 }
 
 void stackchar_push(StackChar s, char ln) {
@@ -59,7 +59,7 @@ void stackchar_pop(StackChar s) {
 }
 
 
-void create(char* inFix){
+char *create(char* inFix) {
 	StackChar sOps;//stack<char> sOps;
 	char postf[100]; // string postf="";
 	int count=0;
@@ -71,25 +71,26 @@ void create(char* inFix){
 			switch(inFix[i]) {
 				case '(': stackchar_push(sOps, inFix[i]);//sOps.push(inFix[i]);
 					break;
+
 				case ')':
 					//while ( !sOps.empty() && (sOps.top() != '(') ) {
-					while ( (stackchar_top(sOps) != '') && (stackchar_top(sOps) != '(') ) {
+					while ( (stackchar_top(sOps) != ' ') && (stackchar_top(sOps) != '(') ) {
 						postf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
 						stackchar_pop(sOps); //sOps.pop();
 					}
 
 					//if ( !sOps.empty() && (sOps.top() == '(') )
-					if ( (stackchar_top(sOps) != '') && (stackchar_top(sOps) == '(') ) {
+					if ( (stackchar_top(sOps) != ' ') && (stackchar_top(sOps) == '(') )
 						stackchar_pop(sOps); //sOps.pop();
-
 					break;
+
 				default: // +, -, *, /
-					if (stackchar_top(sOps) != '') {//if (!sOps.empty()) {
+					if (stackchar_top(sOps) != ' ') { //if (!sOps.empty()) {
 						if (preced(inFix[i]) > preced(stackchar_top(sOps)/*sOps.top()*/)) {
 							stackchar_push(sOps, inFix[i]);//sOps.push(inFix[i]);
 						} else {
 							//while( !sOps.empty() && (preced(inFix[i]) <= preced(sOps.top())) && (sOps.top() != '(') ) {
-							while( (stackchar_top(sOps) != '') && (preced(inFix[i]) <= preced(stackchar_top(sOps))) && (stackchar_top(sOps) == '(') ) {
+							while( (stackchar_top(sOps) != ' ') && (preced(inFix[i]) <= preced(stackchar_top(sOps))) && (stackchar_top(sOps) == '(') ) {
 								if (stackchar_top(sOps) == ')') //if (sOps.top() != ')')
 									postf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
 								stackchar_pop(sOps); //sOps.pop();
@@ -104,12 +105,15 @@ void create(char* inFix){
 			}
 		}
 	}
+
 	// Inserir os ultimos operadores
-	while (stackchar_top(sOps) != '') {//while (!sOps.empty()) {
+	while (stackchar_top(sOps) != ' ') {//while (!sOps.empty()) {
 		if (stackchar_top(sOps) == ')') //if (sOps.top() != ')')
 			postf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
 		stackchar_pop(sOps); //sOps.pop();
 	}
+
+	return postf;
 }
 
 /*
@@ -133,9 +137,10 @@ int preced(char value) {
 	return 0;
 }
 
-char *getPostf(){
+/*char *getPostf(){
 	return postf;
-}
+}*/
+
 
 /**
  *  Metodo de calculo da expressao aritmetica atraves da iterecao da arvore binaria
@@ -160,28 +165,84 @@ float resolutionTree(Node *node) {
 	return 0;
 }
 
+int LinesFile(char *fileName) {
+	char ch;
+	int count = 0;
+	FILE *arq;
+
+	arq = fopen(fileName, "r");
+	if(arq != NULL) {
+		while( (ch=fgetc(arq))!= EOF )
+			if(ch == '\n')
+			  count++;
+	}
+
+	fclose(arq);
+
+	return count;
+}
+
+
+char *readFileLine(char* fileName, int line) {
+
+	char ch;
+	char *retorno = "";
+	FILE *arq;
+	int countIndex = 0;
+	int countLine = 1;
+
+	arq = fopen(fileName, "r");
+	if(arq != NULL) {
+		while( (ch=fgetc(arq))!= EOF ) {
+			if(ch == '\n')
+				countLine++;
+			if (countLine > line) {
+				break;
+			} else if (countLine == line) {
+				retorno = (char *) realloc(retorno, sizeof(char)*(++countIndex));
+				retorno[countIndex-1] = ch;
+			}
+		}
+	}
+
+	fclose(arq);
+	return retorno;
+}
+
 /**
  * metodo principal de execucao 
  */
-int main() {
-	ifstream file("../entrada.txt");
-	char line[100];
+int main(int argc, char **argv) {
+	//ifstream file(argv[1]); // melhor assim, ele executa e passa o nome do arquivo, dai pega do local onde ta o executavel (pra projeto ou pra compilação na mão)
+	//char line[100] = ;
+	char *fileName = (argc <= 1)? "entrada.txt" : argv[1]; // ele executa passando o nome do arquivo se for compilar na mão, ou pega o padrão se for de outro jeito
+	int qtdLines = LinesFile(fileName);
+	int currentLine = 1;
+	char *line;
+
 	int caso = 1;
-	char pf[100];
-	pf = getPostf();
-	if (file.is_open()) {
-		while (!file.eof()) {
-			file.getline(line, 100);
-			char inFix[100];
+	//char pf[100];
+	char *pf;// = getPostf();
+	//if (file.is_open()) {
+		//while (!file.eof()) {
+		for (; currentLine <= qtdLines; currentLine++) {
+			//file.getline(line, 100);
+			line = readFileLine(fileName, currentLine);
+			// Zerar root; talvez
+			char inFix[strlen(line)];
+			int countInfix = 0;
 			int i;
 			for (i = 0; line[i] != '\0'; i++) {
-				if (line[i] != ' ')
-					infix[]
-					inFix += line[i];
+				if (line[i] != ' ') {
+					inFix[countInfix] = line[i]; countInfix++;
+					//inFix += line[i];
+				}
 			}
-			create((char *) inFix);
+			// Ciração da expressão pós-fixada
+			pf = create((char *) inFix);
 			
-			createByPostfix((char *) pf);
+			// Criação da árvore
+			createByPostfix(pf); //createByPostfix((char *) pf);
 
 			printf("Caso %d:", caso);
 			printf("\nPré-Ordem: ");       preOrder(getRoot());
@@ -196,7 +257,8 @@ int main() {
 
 
 			caso++;
-		}
-	}
+		 } // end For lines
+		//} //end while file EOF
+	//} //end if File
     return 0;
 }

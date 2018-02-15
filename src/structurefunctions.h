@@ -9,6 +9,7 @@
 #ifndef STRUCTUREFUNCTIONS_H_
 #define STRUCTUREFUNCTIONS_H_
 
+#include "structurefunctions.h"
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -40,7 +41,7 @@ extern Node* new_Node(char new_value) {
 
 extern Node *root; //variavel global com do nó raiz
 
-extern Node getRoot(); //Retorna raiz da arvore
+extern Node *getRoot(); //Retorna raiz da arvore
 extern int isEmpty(); //verifica se arvore esta vazia
 extern int qtdNodes(Node *r); //retorna a quantidade de nós
 extern int height(Node *r); // retorna a altura da arvore
