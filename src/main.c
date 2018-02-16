@@ -16,7 +16,7 @@
 int preced(char value);
 char *create(char* inFix);
 int LinesFile(char *fileName);
-char *readFileLine(char* fileName, int line);
+void readFileLine(char* fileName, int cline, char *line);
 
 typedef struct StackChar {
 	char data[MAX];
@@ -61,6 +61,7 @@ void stackchar_pop(StackChar s) {
 
 char *create(char* inFix) {
 	StackChar sOps;//stack<char> sOps;
+	sOps.size = 0;
 	char postf[100]; // string postf="";
 	int count=0;
 	int i;
@@ -184,9 +185,8 @@ int LinesFile(char *fileName) {
 }
 
 
-char *readFileLine(char* fileName, int line) {
+void readFileLine(char* fileName, int cline, char *line) {
 	char ch;
-	char *retorno;
 	FILE *arq;
 	int countIndex = 0;
 	int countLine = 1;
@@ -194,72 +194,65 @@ char *readFileLine(char* fileName, int line) {
 	arq = fopen(fileName, "r");
 	if(arq != NULL) {
 		while( (ch=fgetc(arq))!= EOF ) {
-			printf("%c");
-			if(ch == '\n')
+			if(ch == '\n') {
+				line[countIndex++] = '\0';
 				countLine++;
-			if (countLine > line) {
+			}
+			if (countLine > cline) {
 				break;
-			} else if (countLine == line) {
-
-				//retorno = (char *) realloc(retorno, sizeof(char)*(++countIndex));
-				//retorno[countIndex-1] = ch;
+			} else if (countLine == cline) {
+				line[countIndex++] = ch;
 			}
 		}
 	}
-	printf("\neita III");
+
 	fclose(arq);
-	return retorno;
 }
 
 /**
  * metodo principal de execucao 
  */
 int main(int argc, char **argv) {
-	//ifstream file(argv[1]); // melhor assim, ele executa e passa o nome do arquivo, dai pega do local onde ta o executavel (pra projeto ou pra compilação na mão)
-	//char line[100] = ;
 	char *fileName = (argc <= 1)? "entrada.txt" : argv[1]; // ele executa passando o nome do arquivo se for compilar na mão, ou pega o padrão se for de outro jeito
 	int qtdLines = LinesFile(fileName);
 	printf("\nLINHAS: %d\n", qtdLines);
 	int currentLine = 1;
-	char *line;
+	char line[100];
 
 	int caso = 1;
-	//char pf[100];
-	char *pf;// = getPostf();
-	//if (file.is_open()) {
-		//while (!file.eof()) {
-		for (; currentLine <= qtdLines; currentLine++) {
-			//file.getline(line, 100);
-			line = readFileLine(fileName, currentLine);
-			// Zerar root; talvez
-			char inFix[strlen(line)];
-			int countInfix = 0;
-			int i;
-			for (i = 0; line[i] != '\0'; i++) {
-				if (line[i] != ' ') {
-					inFix[countInfix] = line[i]; countInfix++;
-					//inFix += line[i];
-				}
+	char *pf ;
+	for (; currentLine <= qtdLines; currentLine++) {
+		readFileLine(fileName, currentLine, line);
+		puts(line);
+
+		// Zerar root; talvez
+		char inFix[strlen(line)];
+		int countInfix = 0;
+		int i;
+		for (i = 0; line[i] != '\0'; i++) {
+			if (line[i] != ' ') {
+				inFix[countInfix] = line[i]; countInfix++;
 			}
-			// Ciração da expressão pós-fixada
-			pf = create((char *) inFix);
-			
-			// Criação da árvore
-			createByPostfix(pf); //createByPostfix((char *) pf);
+		}
 
-			printf("Caso %d:", caso);
-			printf("\nPré-Ordem: ");       preOrder(getRoot());
-			printf("\nOrdem Simétrica: "); inOrder(getRoot());
-			printf("\nPós-Ordem: ");       posOrder(getRoot());
-			printTreeInLevel();
-			printf("\nAltura: %d",         height(getRoot()));
-			printf("\nFolhas: ");          whoLeaf(getRoot());
-			printf("\nResultado: %.f", resolutionTree(getRoot()));
-			printf("\n\n");
+		// Criação da expressão pós-fixada
+		pf = create((char *) inFix);
 
-			caso++;
-		 } // end For lines
-		//} //end while file EOF
-	//} //end if File
+		// Criação da árvore
+		createByPostfix(pf); //createByPostfix((char *) pf);
+
+		printf("Caso %d:", caso);
+		printf("\nPré-Ordem: ");       preOrder(getRoot());
+		printf("\nOrdem Simétrica: "); inOrder(getRoot());
+		printf("\nPós-Ordem: ");       posOrder(getRoot());
+		printTreeInLevel();
+		printf("\nAltura: %d",         height(getRoot()));
+		printf("\nFolhas: ");          whoLeaf(getRoot());
+		printf("\nResultado: %.f", resolutionTree(getRoot()));
+		printf("\n\n");
+
+		caso++;
+	 } // end For lines
+
     return 0;
 }

@@ -16,7 +16,7 @@
 
 // NEW NODE
 Node *new_Node(char new_value) {
-	Node *novo = malloc(sizeof(Node));
+	Node *novo = (Node*) malloc(sizeof(Node));
 	novo->value = new_value;
 	novo->p = null;
 	novo->lc = null;
@@ -173,7 +173,6 @@ int height(Node *r) {
 void createByPostfix(char* postfix) {
 	//stack<Node*> sNode;
 	Stack *sNode = new_Stack();
-
 	int i;
 	for (i = 0; postfix[i] != '\0'; i++) {
 		//Node *node = new Node(postfix[i]);
@@ -186,7 +185,7 @@ void createByPostfix(char* postfix) {
 			node->lc = stack_top(sNode); stack_pop(sNode);//node->lc = sNode.top(); sNode.pop();
 			// pai
 			node->rc->p = node;
-			node->lc->p = node;
+			node->lc->p =node;
 
 			stack_push(sNode, node); //sNode.push(node);
 		}
