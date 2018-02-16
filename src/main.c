@@ -14,7 +14,7 @@
 #define MAX 100
 
 int preced(char value);
-void *create(char* inFix, char* pf);
+void create(char *inFix, char *pf);
 int LinesFile(char *fileName);
 void readFileLine(char* fileName, int cline, char *line);
 int isPermitted(char ch);
@@ -27,92 +27,91 @@ typedef struct StackChar {
 
 //acho que não precisa
 void freeStackChar(StackChar *s) {
-	free(s->data);
-	free(s);
+	(*s).data[0] = '\0';
+	(*s).size = 0;
 }
 
-// acho que não precisa
-StackChar *new_StackChar() {
-	StackChar *stack = malloc(sizeof(StackChar));
-	stack->size = 0;
-
-	return stack;
+int stackchar_isEmpty(StackChar *s) {
+	return ((*s).size == 0);		
 }
 
-char stackchar_top(StackChar s) {
-	if (s.size > 0)
-		return s.data[s.size-1];
+char stackchar_top(StackChar *s) {	
+	if ((*s).size > 0)
+		return (*s).data[(*s).size-1];
 
 	return ' '; //pilha de char vazia
 }
 
-void stackchar_push(StackChar s, char ln) {
-	if (s.size < MAX)
-		s.data[s.size++] = ln;
+void stackchar_push(StackChar *s, char ln) {	
+	if ((*s).size < MAX)
+		(*s).data[(*s).size++] = ln;			
     // pilha de char cheia
 }
 
-void stackchar_pop(StackChar s) {
-	if (s.size == 0)
+void stackchar_pop(StackChar *s) {
+	if ((*s).size == 0)
 		;//Pilha vazia
 	else
-		s.size--;
+		(*s).size--;
 }
 
-
-void *create(char* inFix, char* pf) {
-	StackChar sOps;//stack<char> sOps;
-	sOps.size = 0;
-	//char postf[100]; // string postf="";
+/**
+ *  
+ */
+void create(char *inFix, char *pf) {
+	StackChar sOps;	
+	sOps.size = 0;	
 	int count = 0;
 	int i;
-	for (i = 0; inFix[i] != '\0'; i++) {
+	for (i = 0; inFix[i] != '\0'; i++) {		
+		printf("char:%c \n", inFix[i]);		
 		if (isdigit(inFix[i])) { //funcao da biblioteca ctype.h para verificar se um caractere eh um digito
-            pf[count] = inFix[i]; count++;//postf += inFix[i];
+            pf[count++] = inFix[i]; //postf += inFix[i];
 		} else {
 			switch(inFix[i]) {
-				case '(': stackchar_push(sOps, inFix[i]);//sOps.push(inFix[i]);
+				case '(': stackchar_push(&sOps, inFix[i]);//sOps.push(inFix[i]);
 					break;
 				case ')':
 					//while ( !sOps.empty() && (sOps.top() != '(') ) {
-					while ( (stackchar_top(sOps) != ' ') && (stackchar_top(sOps) != '(') ) {
-						pf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
-						stackchar_pop(sOps); //sOps.pop();
+					while ( !stackchar_isEmpty(&sOps) && (stackchar_top(&sOps) != '(') ) {
+						pf[count++] = stackchar_top(&sOps); //postf += sOps.top();
+						stackchar_pop(&sOps); //sOps.pop();
 					}
 
 					//if ( !sOps.empty() && (sOps.top() == '(') )
-					if ( (stackchar_top(sOps) != ' ') && (stackchar_top(sOps) == '(') )
-						stackchar_pop(sOps); //sOps.pop();
+					if ( !stackchar_isEmpty(&sOps) && (stackchar_top(&sOps) == '(') )
+						stackchar_pop(&sOps); //sOps.pop();
 					break;
 
 				default: // +, -, *, /
-					if (stackchar_top(sOps) != ' ') { //if (!sOps.empty()) {
-						if (preced(inFix[i]) > preced(stackchar_top(sOps)/*sOps.top()*/)) {
-							stackchar_push(sOps, inFix[i]);//sOps.push(inFix[i
+					if (!stackchar_isEmpty(&sOps)) { //if (!sOps.empty()) {						
+						if ((preced(inFix[i]) > preced(stackchar_top(&sOps) || (stackchar_top(&sOps) == '(') )/*sOps.top()*/)) {
+							stackchar_push(&sOps, inFix[i]);//sOps.push(inFix[i])						
 						} else {
 							//while( !sOps.empty() && (preced(inFix[i]) <= preced(sOps.top())) && (sOps.top() != '(') ) {
-							while( (stackchar_top(sOps) != ' ') && (preced(inFix[i]) <= preced(stackchar_top(sOps))) && (stackchar_top(sOps) == '(') ) {
-								if (stackchar_top(sOps) == ')') //if (sOps.top() != ')')
-									pf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
-								stackchar_pop(sOps); //sOps.pop();
+							while( !stackchar_isEmpty(&sOps) && (preced(inFix[i]) <= preced(stackchar_top(&sOps)))) {
+								if (stackchar_top(&sOps) != ')') //if (sOps.top() != ')')
+									pf[count++] = stackchar_top(&sOps);//postf += sOps.top();
+								stackchar_pop(&sOps); //sOps.pop();
 							}
-							stackchar_push(sOps, inFix[i]);//sOps.push(inFix[i]);
+							stackchar_push(&sOps, inFix[i]);//sOps.push(inFix[i]);
 						}
 					} else {
-						stackchar_push(sOps, inFix[i]); //sOps.push(inFix[i]);
+						stackchar_push(&sOps, inFix[i]); //sOps.push(inFix[i]);
 					}
 					break;
 			}
 		}
+		printf("TOP:%c ", stackchar_top(&sOps));
 	}
 	// Inserir os ultimos operadores
-	while (stackchar_top(sOps) != ' ') {//while (!sOps.empty()) {
-		if (stackchar_top(sOps) == ')') //if (sOps.top() != ')')
-			pf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
-
-		stackchar_pop(sOps); //sOps.pop();
+	while (!stackchar_isEmpty(&sOps)) {//while (!sOps.empty()) {
+		if (stackchar_top(&sOps) != ')') { //if (sOps.top() != ')')
+			pf[count++] = stackchar_top(&sOps);//postf += sOps.top();
+		}
+		stackchar_pop(&sOps); //sOps.pop();
 	}
-	//return postf;
+	pf[count++] = '\0';	
 }
 
 /*
@@ -121,7 +120,6 @@ void *create(char* inFix, char* pf) {
 * @param value Caractere de operador/parentese
 * @return Valor de precedencia
 */
-
 int preced(char value) {
 	switch(value) {
 		case '(':
@@ -182,32 +180,32 @@ int LinesFile(char *fileName) {
 	return count+1;
 }
 
-
+/**
+ * 
+ */
 void readFileLine(char* fileName, int cline, char *line) {
 	char ch;
 	FILE *arq;
 	int countIndex = 0;
-	int countLine = 1;
+	int countLine = 1;	
 
 	arq = fopen(fileName, "r");
 	if(arq != null) {
-		while( (ch = fgetc(arq))!= EOF ) {
-
+		while( (ch = fgetc(arq))!= EOF ) {			
 			if(ch == '\n') {
-				line[countIndex++] = '\0';
 				countLine++;
 			}
 			if (countLine > cline) {
 				break;
-			} else if (countLine == cline && ch != ' ') {
-				line[countIndex++] = ch;
+			} else if (countLine == cline && ch != ' ' && ch != '\n') {
+				line[countIndex++] = ch;				
 			}
 		}
+	line[countIndex++] = '\0';
 	}
-
+	
 	fclose(arq);
 }
-
 
 /**
  * metodo principal de execucao
@@ -215,21 +213,20 @@ void readFileLine(char* fileName, int cline, char *line) {
 int main(int argc, char **argv) {
 	char *fileName = (argc <= 1)? "entrada.txt" : argv[1]; // ele executa passando o nome do arquivo se for compilar na mão, ou pega o padrão se for de outro jeito
 	int qtdLines = LinesFile(fileName);
-	int currentLine = 1;
-	char line[100];
-
+	char line[101];	
+	char pf[101];
 	int caso = 1;
-	char pf[100];
-	int leitura = 1;
-	while(leitura = 1) {
-        printf("\nDigite uma expressao: ");
-        scanf("%s", &line[0]);
-        // Criação da expressão pós-fixada
+	for (; caso <= qtdLines; caso++) {		
+		readFileLine(fileName, caso, line);	
+		printf("\nINFIX File: %s\n", line);
+
+		// Criação da expressão pós-fixada		
 		create((char *) line, pf);
-
+		printf("\nPOSTFIX File: %s\n", pf);
 		// Criação da árvore
-		createByPostfix("832*-"); //createByPostfix((char *) pf);
+		createByPostfix(pf);
 
+		// SAÍDA
 		printf("Caso %d:", caso);
 		printf("\nPre-Ordem: ");       preOrder(getRoot());
 		printf("\nOrdem Simetrica: "); inOrder(getRoot());
@@ -238,53 +235,8 @@ int main(int argc, char **argv) {
 		printf("\nAltura: %d",         height(getRoot()));
 		printf("\nFolhas: ");          whoLeaf(getRoot());
 		printf("\nResultado: %.f", resolutionTree(getRoot()));
-		printf("\n\n");
-
-		caso++;
-		char resposta;
-		printf("\nDigite S para digitar uma nova expressao e N para encerrar: ");
-		scanf("%c", &resposta);
-		if (resposta != 'S'){
-            printf("\nEncerrando!");
-            break;
-		}
+		printf("\n\n");		
 	 } // end For lines
 
     return 0;
 }
-/*
-	for (; currentLine <= qtdLines; currentLine++) {
-		readFileLine(fileName, currentLine, line);
-
-		// Zerar root; talvez
-		//char inFix[strlen(line)];
-		//strcpy(inFix, line);
-		int countInfix = 0;
-		int i;
-		/*for (i = 0; line[i] != '\0'; i++) {
-            inFix[countInfix] = line[i];
-            countInfix++;
-		}
-		printf("DEPOIS: %s", line);
-		// Criação da expressão pós-fixada
-		create((char *) inFix, line);
-
-		// Criação da árvore
-		createByPostfix("832*-"); //createByPostfix((char *) pf);
-
-		printf("Caso %d:", caso);
-		printf("\nPre-Ordem: ");       preOrder(getRoot());
-		printf("\nOrdem Simetrica: "); inOrder(getRoot());
-		printf("\nPos-Ordem: ");       posOrder(getRoot());
-		printTreeInLevel();
-		printf("\nAltura: %d",         height(getRoot()));
-		printf("\nFolhas: ");          whoLeaf(getRoot());
-		printf("\nResultado: %.f", resolutionTree(getRoot()));
-		printf("\n\n");
-
-		caso++;
-	 } // end For lines
-
-    return 0;
-}
-*/

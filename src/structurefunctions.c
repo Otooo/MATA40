@@ -51,7 +51,7 @@ Node *stack_top(Stack *s) {
 	return null; //pilha vazia
 }
 
-void stack_push(Stack *s, Node* node) {
+void stack_push(Stack *s, Node *node) {
 	if (s->size < MAX)
 		s->data[s->size++] = node;
 }
@@ -164,8 +164,7 @@ void createByPostfix(char* postfix) {
 	//stack<Node*> sNode;
 	Stack *sNode = new_Stack();
 	int i;
-	for (i = 0; postfix[i] != '\0'; i++) {
-		//Node *node = new Node(postfix[i]);
+	for (i = 0; postfix[i] != '\0'; i++) {		
 		Node *node = new_Node(postfix[i]);
 		if (isdigit(postfix[i])) {
 			stack_push(sNode, node); //sNode.push(node);
