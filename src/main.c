@@ -17,6 +17,8 @@ int preced(char value);
 void *create(char* inFix, char* pf);
 int LinesFile(char *fileName);
 void readFileLine(char* fileName, int cline, char *line);
+int isPermitted(char ch);
+int isOperator(char ch);
 
 typedef struct StackChar {
 	char data[MAX];
@@ -67,7 +69,6 @@ void *create(char* inFix, char* pf) {
 	for (i = 0; inFix[i] != '\0'; i++) {
 		if (isdigit(inFix[i])) { //funcao da biblioteca ctype.h para verificar se um caractere eh um digito
             pf[count] = inFix[i]; count++;//postf += inFix[i];
-            printf("\n>: %s", pf);
 		} else {
 			switch(inFix[i]) {
 				case '(': stackchar_push(sOps, inFix[i]);//sOps.push(inFix[i]);
@@ -75,7 +76,6 @@ void *create(char* inFix, char* pf) {
 				case ')':
 					//while ( !sOps.empty() && (sOps.top() != '(') ) {
 					while ( (stackchar_top(sOps) != ' ') && (stackchar_top(sOps) != '(') ) {
-                printf("\n>>: %c", inFix[i]);
 						pf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
 						stackchar_pop(sOps); //sOps.pop();
 					}
@@ -93,7 +93,6 @@ void *create(char* inFix, char* pf) {
 							//while( !sOps.empty() && (preced(inFix[i]) <= preced(sOps.top())) && (sOps.top() != '(') ) {
 							while( (stackchar_top(sOps) != ' ') && (preced(inFix[i]) <= preced(stackchar_top(sOps))) && (stackchar_top(sOps) == '(') ) {
 								if (stackchar_top(sOps) == ')') //if (sOps.top() != ')')
-                                                    printf("\n>>>: %c", inFix[i]);
 									pf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
 								stackchar_pop(sOps); //sOps.pop();
 							}
@@ -109,12 +108,10 @@ void *create(char* inFix, char* pf) {
 	// Inserir os ultimos operadores
 	while (stackchar_top(sOps) != ' ') {//while (!sOps.empty()) {
 		if (stackchar_top(sOps) == ')') //if (sOps.top() != ')')
-            printf("\n>>>>: %c", inFix[i]);
 			pf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
 
 		stackchar_pop(sOps); //sOps.pop();
 	}
-	printf("\n>>>>>>>>>>>>>>>>>>%s\n", pf);
 	//return postf;
 }
 
@@ -195,13 +192,14 @@ void readFileLine(char* fileName, int cline, char *line) {
 	arq = fopen(fileName, "r");
 	if(arq != null) {
 		while( (ch = fgetc(arq))!= EOF ) {
+
 			if(ch == '\n') {
 				line[countIndex++] = '\0';
 				countLine++;
 			}
 			if (countLine > cline) {
 				break;
-			} else if (countLine == cline) {
+			} else if (countLine == cline && ch != ' ') {
 				line[countIndex++] = ch;
 			}
 		}
@@ -209,6 +207,7 @@ void readFileLine(char* fileName, int cline, char *line) {
 
 	fclose(arq);
 }
+
 
 /**
  * metodo principal de execucao
@@ -221,20 +220,54 @@ int main(int argc, char **argv) {
 
 	int caso = 1;
 	char pf[100];
+	int leitura = 1;
+	while(leitura = 1) {
+        printf("\nDigite uma expressao: ");
+        scanf("%s", &line[0]);
+        // Criação da expressão pós-fixada
+		create((char *) line, pf);
+
+		// Criação da árvore
+		createByPostfix("832*-"); //createByPostfix((char *) pf);
+
+		printf("Caso %d:", caso);
+		printf("\nPre-Ordem: ");       preOrder(getRoot());
+		printf("\nOrdem Simetrica: "); inOrder(getRoot());
+		printf("\nPos-Ordem: ");       posOrder(getRoot());
+		printTreeInLevel();
+		printf("\nAltura: %d",         height(getRoot()));
+		printf("\nFolhas: ");          whoLeaf(getRoot());
+		printf("\nResultado: %.f", resolutionTree(getRoot()));
+		printf("\n\n");
+
+		caso++;
+		char resposta;
+		printf("\nDigite S para digitar uma nova expressao e N para encerrar: ");
+		scanf("%c", &resposta);
+		if (resposta != 'S'){
+            printf("\nEncerrando!");
+            break;
+		}
+	 } // end For lines
+
+    return 0;
+}
+/*
 	for (; currentLine <= qtdLines; currentLine++) {
 		readFileLine(fileName, currentLine, line);
 
 		// Zerar root; talvez
-		char inFix[strlen(line)];
+		//char inFix[strlen(line)];
+		//strcpy(inFix, line);
 		int countInfix = 0;
 		int i;
-		for (i = 0; line[i] != '\0'; i++) {
-			if (line[i] != ' ') {
-				inFix[countInfix] = line[i]; countInfix++;
-			}
+		/*for (i = 0; line[i] != '\0'; i++) {
+            inFix[countInfix] = line[i];
+            countInfix++;
 		}
+		printf("DEPOIS: %s", line);
 		// Criação da expressão pós-fixada
-		create((char *) inFix, "8 - 2*3");
+		create((char *) inFix, line);
 
 		// Criação da árvore
 		createByPostfix("832*-"); //createByPostfix((char *) pf);
@@ -254,3 +287,4 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+*/
