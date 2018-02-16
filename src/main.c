@@ -64,9 +64,8 @@ void create(char *inFix, char *pf) {
 	int count = 0;
 	int i;
 	for (i = 0; inFix[i] != '\0'; i++) {		
-		printf("char:%c \n", inFix[i]);		
 		if (isdigit(inFix[i])) { //funcao da biblioteca ctype.h para verificar se um caractere eh um digito
-            pf[count++] = inFix[i]; //postf += inFix[i];
+            pf[count++] = inFix[i]; //postf += inFix[i];			
 		} else {
 			switch(inFix[i]) {
 				case '(': stackchar_push(&sOps, inFix[i]);//sOps.push(inFix[i]);
@@ -85,8 +84,8 @@ void create(char *inFix, char *pf) {
 
 				default: // +, -, *, /
 					if (!stackchar_isEmpty(&sOps)) { //if (!sOps.empty()) {						
-						if ((preced(inFix[i]) > preced(stackchar_top(&sOps) || (stackchar_top(&sOps) == '(') )/*sOps.top()*/)) {
-							stackchar_push(&sOps, inFix[i]);//sOps.push(inFix[i])						
+						if ((preced(inFix[i]) > preced(stackchar_top(&sOps))) || (stackchar_top(&sOps) == '(') )/*sOps.top()*/ {
+							stackchar_push(&sOps, inFix[i]);//sOps.push(inFix[i])					
 						} else {
 							//while( !sOps.empty() && (preced(inFix[i]) <= preced(sOps.top())) && (sOps.top() != '(') ) {
 							while( !stackchar_isEmpty(&sOps) && (preced(inFix[i]) <= preced(stackchar_top(&sOps)))) {
@@ -101,9 +100,9 @@ void create(char *inFix, char *pf) {
 					}
 					break;
 			}
-		}
-		printf("TOP:%c ", stackchar_top(&sOps));
+		}	
 	}
+
 	// Inserir os ultimos operadores
 	while (!stackchar_isEmpty(&sOps)) {//while (!sOps.empty()) {
 		if (stackchar_top(&sOps) != ')') { //if (sOps.top() != ')')
@@ -217,12 +216,11 @@ int main(int argc, char **argv) {
 	char pf[101];
 	int caso = 1;
 	for (; caso <= qtdLines; caso++) {		
-		readFileLine(fileName, caso, line);	
-		printf("\nINFIX File: %s\n", line);
+		readFileLine(fileName, caso, line);			
 
 		// Criação da expressão pós-fixada		
 		create((char *) line, pf);
-		printf("\nPOSTFIX File: %s\n", pf);
+		
 		// Criação da árvore
 		createByPostfix(pf);
 
