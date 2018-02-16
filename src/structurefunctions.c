@@ -48,22 +48,17 @@ Stack *new_Stack() {
 Node *stack_top(Stack *s) {
 	if (s->size > 0)
 		return s->data[s->size-1];
-
-	return NULL; //pilha vazia
+	return null; //pilha vazia
 }
 
 void stack_push(Stack *s, Node* node) {
 	if (s->size < MAX)
 		s->data[s->size++] = node;
-	else
-		;// pilha cheia
 }
 
 void stack_pop(Stack *s) {
-	if (s->size == 0)
-		;//Pilha vazia
-	else
-		s->size--;
+	if (s->size > 0)
+        s->size--;
 }
 
 // FILA
@@ -89,15 +84,11 @@ Queue *new_Queue() {
 Node *queue_front(Queue *q) {
 	if (q->size > 0)
 		return q->data[0];
-
-	return NULL; // Fila vazia
 }
 
 void queue_push(Queue *q, Node* node) {
 	if (q->size < MAX)
 		q->data[q->size++] = node;
-	else
-		;// Fila cheia
 }
 
 void queue_pop(Queue *q) {
@@ -115,8 +106,7 @@ void queue_pop(Queue *q) {
 			naux1 = naux2;
 		}
 		q->size--;
-	} else
-		;// Fila vazia
+	}
 }
 
 
@@ -135,7 +125,7 @@ Node *getRoot() {
  * @return Verdadeiro se a árvore estiver vazia, falso caso contrário
  */
 int isEmpty() {
-    return (root == NULL)? 0:1;
+    return (root == null)? 0:1;
 }
 
 /**
@@ -145,7 +135,7 @@ int isEmpty() {
  * @return Quantidade de nós na árvore/sub-árvore
  */
 int qtdNodes(Node *r) {
-	if (r == NULL)
+	if (r == null)
 		return 0;
 	return 1 + qtdNodes(r->lc) + qtdNodes(r->rc);
 }
@@ -157,7 +147,7 @@ int qtdNodes(Node *r) {
  * @return Altura da árvore/sub-árvore
  */
 int height(Node *r) {
-	if (r == NULL)
+	if (r == null)
 		return 0;
 	int lh = height(r->lc);
 	int rh = height(r->rc);
@@ -184,8 +174,10 @@ void createByPostfix(char* postfix) {
 			node->rc = stack_top(sNode); stack_pop(sNode);//node->rc = sNode.top(); sNode.pop();
 			node->lc = stack_top(sNode); stack_pop(sNode);//node->lc = sNode.top(); sNode.pop();
 			// pai
-			node->rc->p = node;
-			node->lc->p =node;
+			if(node->rc != null)
+                node->rc->p = node;
+			if(node->lc != null)
+                node->lc->p = node;
 
 			stack_push(sNode, node); //sNode.push(node);
 		}
@@ -219,19 +211,19 @@ void printTreeInLevel() {
 		}
 		auxNivel++;
 
-		if (print && n != NULL) {
+		if (print && n != null) {
 			printf("\nNivel %d: ", nivel-1);
 			print = 0; // false
 		}
 
-		if (n != NULL) {
+		if (n != null) {
 			printf("%c ", n->value);
 
 			queue_push(fila, n->lc);//fila.push(n->lc);
 			queue_push(fila, n->rc);//fila.push(n->rc);
 		} else {
-			queue_push(fila, NULL);//fila.push(NULL);
-			queue_push(fila, NULL);//fila.push(NULL);
+			queue_push(fila, null);//fila.push(NULL);
+			queue_push(fila, null);//fila.push(NULL);
 		}
 	}
 }
@@ -243,7 +235,7 @@ void printTreeInLevel() {
  * @param r Nó de referência
  */
 void preOrder(Node *r) {
-	if (r != NULL) {
+	if (r != null) {
 		printf("%c ", r->value);
 		preOrder(r->lc);
 		preOrder(r->rc);
@@ -256,7 +248,7 @@ void preOrder(Node *r) {
  * @param r Nó de referência
  */
 void inOrder(Node *r) {
-	if (r != NULL) {
+	if (r != null) {
 		inOrder(r->lc);
 		printf("%c ", r->value);
 		inOrder(r->rc);
@@ -269,7 +261,7 @@ void inOrder(Node *r) {
  * @param r Nó de referência
  */
 void posOrder(Node *r) {
-	if (r != NULL) {
+	if (r != null) {
 		posOrder(r->lc);
 		posOrder(r->rc);
 		printf("%c ", r->value);
@@ -283,13 +275,12 @@ void posOrder(Node *r) {
  * @param r Nó de referência
  */
 void whoLeaf(Node *r) {
-	if (r == NULL)
+	if (r == null)
 		return;
-	if (r->lc == NULL && r->rc == NULL) {
+	if (r->lc == null && r->rc == null && r->p != null) {
 		printf("%c(%c) ", r->value, r->p->value);
 		return;
 	}
-
 	whoLeaf(r->lc);
 	whoLeaf(r->rc);
 }

@@ -1,6 +1,6 @@
 //============================================================================
 // Name        : MATA40.c
-// Author      : 
+// Author      :
 // Version     :
 // Copyright   : Your copyright notice
 // Description : Ansi-style
@@ -14,7 +14,7 @@
 #define MAX 100
 
 int preced(char value);
-char *create(char* inFix);
+void *create(char* inFix, char* pf);
 int LinesFile(char *fileName);
 void readFileLine(char* fileName, int cline, char *line);
 
@@ -47,8 +47,7 @@ char stackchar_top(StackChar s) {
 void stackchar_push(StackChar s, char ln) {
 	if (s.size < MAX)
 		s.data[s.size++] = ln;
-	else
-		;// pilha de char cheia
+    // pilha de char cheia
 }
 
 void stackchar_pop(StackChar s) {
@@ -59,24 +58,25 @@ void stackchar_pop(StackChar s) {
 }
 
 
-char *create(char* inFix) {
+void *create(char* inFix, char* pf) {
 	StackChar sOps;//stack<char> sOps;
 	sOps.size = 0;
-	char postf[100]; // string postf="";
-	int count=0;
+	//char postf[100]; // string postf="";
+	int count = 0;
 	int i;
 	for (i = 0; inFix[i] != '\0'; i++) {
 		if (isdigit(inFix[i])) { //funcao da biblioteca ctype.h para verificar se um caractere eh um digito
-			postf[count] = inFix[i]; count++;//postf += inFix[i];
+            pf[count] = inFix[i]; count++;//postf += inFix[i];
+            printf("\n>: %s", pf);
 		} else {
 			switch(inFix[i]) {
 				case '(': stackchar_push(sOps, inFix[i]);//sOps.push(inFix[i]);
 					break;
-
 				case ')':
 					//while ( !sOps.empty() && (sOps.top() != '(') ) {
 					while ( (stackchar_top(sOps) != ' ') && (stackchar_top(sOps) != '(') ) {
-						postf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
+                printf("\n>>: %c", inFix[i]);
+						pf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
 						stackchar_pop(sOps); //sOps.pop();
 					}
 
@@ -88,12 +88,13 @@ char *create(char* inFix) {
 				default: // +, -, *, /
 					if (stackchar_top(sOps) != ' ') { //if (!sOps.empty()) {
 						if (preced(inFix[i]) > preced(stackchar_top(sOps)/*sOps.top()*/)) {
-							stackchar_push(sOps, inFix[i]);//sOps.push(inFix[i]);
+							stackchar_push(sOps, inFix[i]);//sOps.push(inFix[i
 						} else {
 							//while( !sOps.empty() && (preced(inFix[i]) <= preced(sOps.top())) && (sOps.top() != '(') ) {
 							while( (stackchar_top(sOps) != ' ') && (preced(inFix[i]) <= preced(stackchar_top(sOps))) && (stackchar_top(sOps) == '(') ) {
 								if (stackchar_top(sOps) == ')') //if (sOps.top() != ')')
-									postf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
+                                                    printf("\n>>>: %c", inFix[i]);
+									pf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
 								stackchar_pop(sOps); //sOps.pop();
 							}
 							stackchar_push(sOps, inFix[i]);//sOps.push(inFix[i]);
@@ -101,27 +102,27 @@ char *create(char* inFix) {
 					} else {
 						stackchar_push(sOps, inFix[i]); //sOps.push(inFix[i]);
 					}
-
 					break;
 			}
 		}
 	}
-
 	// Inserir os ultimos operadores
 	while (stackchar_top(sOps) != ' ') {//while (!sOps.empty()) {
 		if (stackchar_top(sOps) == ')') //if (sOps.top() != ')')
-			postf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
+            printf("\n>>>>: %c", inFix[i]);
+			pf[count] = stackchar_top(sOps); count++;//postf += sOps.top();
+
 		stackchar_pop(sOps); //sOps.pop();
 	}
-
-	return postf;
+	printf("\n>>>>>>>>>>>>>>>>>>%s\n", pf);
+	//return postf;
 }
 
 /*
 * metodo de ordem de precedencia dos operadores e parenteses
-* 
+*
 * @param value Caractere de operador/parentese
-* @return Valor de precedencia 
+* @return Valor de precedencia
 */
 
 int preced(char value) {
@@ -147,9 +148,9 @@ int preced(char value) {
  *  Metodo de calculo da expressao aritmetica atraves da iterecao da arvore binaria
  */
 float resolutionTree(Node *node) {
-	if (node == NULL)
+	if (node == null)
 		return 0;
-	if (node->lc == NULL && node->rc == NULL)
+	if (node->lc == null && node->rc == null)
 		return node->value - '0'; // Convertendo de Char para Numero
 
 	switch (node->value) {
@@ -172,7 +173,7 @@ int LinesFile(char *fileName) {
 	FILE *arq;
 
 	arq = fopen(fileName, "r");
-	if(arq != NULL) {
+	if(arq != null) {
 		while( (ch=fgetc(arq))!= EOF ) {
 			if(ch == '\n')
 			  count++;
@@ -192,8 +193,8 @@ void readFileLine(char* fileName, int cline, char *line) {
 	int countLine = 1;
 
 	arq = fopen(fileName, "r");
-	if(arq != NULL) {
-		while( (ch=fgetc(arq))!= EOF ) {
+	if(arq != null) {
+		while( (ch = fgetc(arq))!= EOF ) {
 			if(ch == '\n') {
 				line[countIndex++] = '\0';
 				countLine++;
@@ -210,20 +211,18 @@ void readFileLine(char* fileName, int cline, char *line) {
 }
 
 /**
- * metodo principal de execucao 
+ * metodo principal de execucao
  */
 int main(int argc, char **argv) {
 	char *fileName = (argc <= 1)? "entrada.txt" : argv[1]; // ele executa passando o nome do arquivo se for compilar na mão, ou pega o padrão se for de outro jeito
 	int qtdLines = LinesFile(fileName);
-	printf("\nLINHAS: %d\n", qtdLines);
 	int currentLine = 1;
 	char line[100];
 
 	int caso = 1;
-	char *pf ;
+	char pf[100];
 	for (; currentLine <= qtdLines; currentLine++) {
 		readFileLine(fileName, currentLine, line);
-		puts(line);
 
 		// Zerar root; talvez
 		char inFix[strlen(line)];
@@ -234,17 +233,16 @@ int main(int argc, char **argv) {
 				inFix[countInfix] = line[i]; countInfix++;
 			}
 		}
-
 		// Criação da expressão pós-fixada
-		pf = create((char *) inFix);
+		create((char *) inFix, "8 - 2*3");
 
 		// Criação da árvore
-		createByPostfix(pf); //createByPostfix((char *) pf);
+		createByPostfix("832*-"); //createByPostfix((char *) pf);
 
 		printf("Caso %d:", caso);
-		printf("\nPré-Ordem: ");       preOrder(getRoot());
-		printf("\nOrdem Simétrica: "); inOrder(getRoot());
-		printf("\nPós-Ordem: ");       posOrder(getRoot());
+		printf("\nPre-Ordem: ");       preOrder(getRoot());
+		printf("\nOrdem Simetrica: "); inOrder(getRoot());
+		printf("\nPos-Ordem: ");       posOrder(getRoot());
 		printTreeInLevel();
 		printf("\nAltura: %d",         height(getRoot()));
 		printf("\nFolhas: ");          whoLeaf(getRoot());
